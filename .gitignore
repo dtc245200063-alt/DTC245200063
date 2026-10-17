@@ -1,0 +1,19 @@
+# Environment secrets
+.env
+.env.local
+
+# SSL private keys
+nginx/certs/*.key
+*.key
+
+# Evidence & temporary logs
+evidence/
+*.log
+
+# WordPress uploads and dynamic configs
+wp-config.php
+wp-content/uploads/
+
+# Docker volumes data (if mounted locally)
+data/
+*.pid
