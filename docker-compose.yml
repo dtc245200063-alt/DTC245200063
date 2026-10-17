@@ -1,2 +1,130 @@
-# De 3 - Website Quang ba San pham (WordPress)
-# Khoi tao tai Buoc 0 - Se trien khai tai Buoc 1 & 2
+services:
+  db:
+    image: mysql:8.0
+    container_name: de3_mysql
+    restart: unless-stopped
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-wordpress}
+      MYSQL_USER: ${MYSQL_USER:-wp_app}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD} || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    networks:
+      de3_network:
+        aliases:
+          - db
+          - mysql
+
+  wordpress:
+    image: wordpress:php8.2-apache
+    container_name: de3_wordpress
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE:-wordpress}
+      WORDPRESS_DB_USER: ${MYSQL_USER:-wp_app}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_TABLE_PREFIX: wp_
+      AUTH_KEY: ${AUTH_KEY}
+      SECURE_AUTH_KEY: ${SECURE_AUTH_KEY}
+      LOGGED_IN_KEY: ${LOGGED_IN_KEY}
+      NONCE_KEY: ${NONCE_KEY}
+      AUTH_SALT: ${AUTH_SALT}
+      SECURE_AUTH_SALT: ${SECURE_AUTH_SALT}
+      LOGGED_IN_SALT: ${LOGGED_IN_SALT}
+      NONCE_SALT: ${NONCE_SALT}
+      WORDPRESS_CONFIG_EXTRA: |
+        // Handle Reverse Proxy HTTPS & Ports
+        if (isset($$_SERVER['HTTP_X_FORWARDED_PROTO']) && $$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+            $$_SERVER['HTTPS'] = 'on';
+        }
+        if (isset($$_SERVER['HTTP_X_FORWARDED_HOST'])) {
+            $$_SERVER['HTTP_HOST'] = $$_SERVER['HTTP_X_FORWARDED_HOST'];
+        }
+        define('WP_HOME', 'http://192.168.102.128:8080');
+        define('WP_SITEURL', 'http://192.168.102.128:8080');
+        define('DISALLOW_FILE_EDIT', true);
+    volumes:
+      - wp_data:/var/www/html
+      - ./wordpress/mu-plugins:/var/www/html/wp-content/mu-plugins
+    networks:
+      - de3_network
+
+  phpmyadmin:
+    image: phpmyadmin:5.2.1-apache
+    container_name: de3_phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 0
+      UPLOAD_LIMIT: 64M
+    networks:
+      - de3_network
+
+  wpcli:
+    image: wordpress:cli-2.11.0
+    container_name: de3_wpcli
+    user: "33:33"
+    working_dir: /var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+      wordpress:
+        condition: service_started
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE:-wordpress}
+      WORDPRESS_DB_USER: ${MYSQL_USER:-wp_app}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WP_ADMIN_USER: ${WP_ADMIN_USER}
+      WP_ADMIN_PASSWORD: ${WP_ADMIN_PASSWORD}
+      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+      WP_EDITOR_USER: ${WP_EDITOR_USER}
+      WP_EDITOR_PASSWORD: ${WP_EDITOR_PASSWORD}
+      WP_EDITOR_EMAIL: ${WP_EDITOR_EMAIL}
+    volumes:
+      - wp_data:/var/www/html
+      - ./wordpress/scripts:/scripts:ro
+      - ./wordpress/mu-plugins:/var/www/html/wp-content/mu-plugins
+    networks:
+      - de3_network
+    profiles:
+      - tools
+    entrypoint: ["wp"]
+
+volumes:
+  db_data:
+    name: de3_db_data
+  wp_data:
+    name: de3_wp_data
+
+networks:
+  de3_network:
+    name: de3_network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
