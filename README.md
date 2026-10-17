@@ -45,5 +45,20 @@ docker compose up -d --build
 - **Trang danh mục sản phẩm:** [https://192.168.102.128/san-pham/](https://192.168.102.128/san-pham/)
 - **Quản trị WordPress:** [https://192.168.102.128/wp-admin/](https://192.168.102.128/wp-admin/)
 - **phpMyAdmin:** [https://192.168.102.128/phpmyadmin/](https://192.168.102.128/phpmyadmin/)
+- **Hệ thống giám sát Grafana:** [https://192.168.102.128/grafana/](https://192.168.102.128/grafana/)
 
 > **Lưu ý về chứng chỉ tự ký:** Khi truy cập lần đầu qua trình duyệt, do chứng chỉ là tự ký, trình duyệt sẽ hiển thị cảnh báo bảo mật. Nhấp vào **Nâng cao (Advanced)** -> Chọn **Tiếp tục truy cập (Proceed to 192.168.102.128)** để vào giao diện.
+
+---
+
+## 5. Hệ thống Giám sát (Monitoring Architecture)
+Hệ thống sử dụng mô hình giám sát tập trung qua mạng nội bộ Docker (`de3_network`):
+- **Prometheus:** Thu thập chỉ số (metrics) định kỳ mỗi 15 giây từ các Exporter.
+- **cAdvisor:** Giám sát mức độ tiêu thụ tài nguyên thực tế (CPU %, RAM, Network I/O) của từng container.
+- **Nginx Prometheus Exporter:** Đọc chỉ số kết nối (active/reading/writing/waiting) và tần suất request từ `/nginx_status`.
+- **MySQL Exporter:** Thu thập chỉ số hiệu năng cơ sở dữ liệu (Queries/sec, Connections, Threads Running, InnoDB Buffer Pool).
+- **Grafana:** Trực quan hóa dữ liệu với 3 Dashboard chuyên dụng được nạp tự động (Provisioning):
+  1. `WP - Containers`: Tải CPU, RAM, Network I/O từng container.
+  2. `WP - Nginx`: Kết nối, tốc độ request, handled vs accepted.
+  3. `WP - MySQL`: Tần suất truy vấn, trạng thái luồng xử lý, bộ nhớ đệm InnoDB.
+
