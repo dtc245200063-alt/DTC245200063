@@ -34,8 +34,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    ports:
-      - "8080:80"
+    # Ports 8080 removed as all traffic is routed through Nginx reverse proxy
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE:-wordpress}
@@ -51,15 +50,15 @@ services:
       LOGGED_IN_SALT: ${LOGGED_IN_SALT}
       NONCE_SALT: ${NONCE_SALT}
       WORDPRESS_CONFIG_EXTRA: |
-        // Handle Reverse Proxy HTTPS & Ports
+        // Handle Reverse Proxy HTTPS & Host
         if (isset($$_SERVER['HTTP_X_FORWARDED_PROTO']) && $$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
             $$_SERVER['HTTPS'] = 'on';
         }
         if (isset($$_SERVER['HTTP_X_FORWARDED_HOST'])) {
             $$_SERVER['HTTP_HOST'] = $$_SERVER['HTTP_X_FORWARDED_HOST'];
         }
-        define('WP_HOME', 'http://192.168.102.128:8080');
-        define('WP_SITEURL', 'http://192.168.102.128:8080');
+        define('WP_HOME', 'https://192.168.102.128');
+        define('WP_SITEURL', 'https://192.168.102.128');
         define('DISALLOW_FILE_EDIT', true);
     volumes:
       - wp_data:/var/www/html
@@ -74,15 +73,33 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    ports:
-      - "8081:80"
+    # Port 8081 removed, routed through Nginx /phpmyadmin/
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
       PMA_ARBITRARY: 0
+      PMA_ABSOLUTE_URI: https://192.168.102.128/phpmyadmin/
       UPLOAD_LIMIT: 64M
     networks:
       - de3_network
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: de3_nginx
+    restart: unless-stopped
+    depends_on:
+      - wordpress
+      - phpmyadmin
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    networks:
+      de3_network:
+        aliases:
+          - nginx
 
   wpcli:
     image: wordpress:cli-2.11.0
