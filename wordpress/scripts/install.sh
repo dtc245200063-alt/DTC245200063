@@ -17,7 +17,7 @@ if ! $WP_CLI core is-installed 2>/dev/null; then
         --url="http://192.168.102.128:8080" \
         --title="Trà & Cà Phê Đặc Sản Việt Nam" \
         --admin_user="${WP_ADMIN_USER:-quantri}" \
-        --admin_password="${WP_ADMIN_PASSWORD:-Admin_WP2026_sB8eY3}" \
+        --admin_password="${WP_ADMIN_PASSWORD}" \
         --admin_email="${WP_ADMIN_EMAIL:-quantri@ictu.edu.vn}" \
         --skip-email
 else
@@ -40,12 +40,12 @@ echo "--- Ensuring Editor User exists ---"
 if ! $WP_CLI user get "${WP_EDITOR_USER:-bientap01}" --field=ID 2>/dev/null; then
     $WP_CLI user create "${WP_EDITOR_USER:-bientap01}" "${WP_EDITOR_EMAIL:-bientap01@ictu.edu.vn}" \
         --role=editor \
-        --user_pass="${WP_EDITOR_PASSWORD:-Editor_WP2026_kF7uQ9}" \
+        --user_pass="${WP_EDITOR_PASSWORD}" \
         --display_name="Biên Tập Viên 01"
     echo "Created editor user ${WP_EDITOR_USER:-bientap01}"
 else
     $WP_CLI user update "${WP_EDITOR_USER:-bientap01}" \
-        --user_pass="${WP_EDITOR_PASSWORD:-Editor_WP2026_kF7uQ9}" \
+        --user_pass="${WP_EDITOR_PASSWORD}" \
         --role=editor 2>/dev/null || true
     echo "Editor user ${WP_EDITOR_USER:-bientap01} verified."
 fi
