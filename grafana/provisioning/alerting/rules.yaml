@@ -1,0 +1,73 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: "WP - Security Alerts"
+    folder: "Security"
+    interval: 10s
+    rules:
+      - uid: wp_brute_force_login
+        title: "WP - Brute force login"
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 60
+              to: 0
+            datasourceUid: loki
+            model:
+              editorMode: code
+              expr: sum(count_over_time({job="webapp"} |= "LOGIN_FAILED" [1m]))
+              queryType: range
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 60
+              to: 0
+            datasourceUid: __expr__
+            model:
+              datasource:
+                name: Expression
+                type: __expr__
+                uid: __expr__
+              expression: A
+              reducer: last
+              refId: B
+              type: reduce
+              settings:
+                mode: dropNN
+          - refId: C
+            relativeTimeRange:
+              from: 60
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 5
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                name: Expression
+                type: __expr__
+                uid: __expr__
+              expression: B
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: OK
+        for: 0s
+        annotations:
+          summary: "Phát hiện tấn công dò mật khẩu (brute-force) vào WordPress wp-login.php"
+          description: "Số lần LOGIN_FAILED vượt quá 5 lần/phút. Cần kiểm tra ngay log Nginx và WordPress qua LogQL để truy vết IP nguồn."
+        labels:
+          severity: critical

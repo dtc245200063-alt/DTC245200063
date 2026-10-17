@@ -34,7 +34,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    # Ports 8080 removed as all traffic is routed through Nginx reverse proxy
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE:-wordpress}
@@ -72,7 +71,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    # Port 8081 removed, routed through Nginx /phpmyadmin/
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
@@ -158,6 +156,7 @@ services:
     restart: unless-stopped
     depends_on:
       - prometheus
+      - loki
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
@@ -218,6 +217,47 @@ services:
         aliases:
           - mysqld-exporter
 
+  loki:
+    image: grafana/loki:2.9.2
+    container_name: de3_loki
+    restart: unless-stopped
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./loki/loki-config.yaml:/etc/loki/local-config.yaml:ro
+      - loki_data:/loki
+    networks:
+      de3_network:
+        aliases:
+          - loki
+
+  promtail:
+    image: grafana/promtail:3.6.8
+    container_name: de3_promtail
+    restart: unless-stopped
+    command: -config.file=/etc/promtail/promtail-config.yaml
+    volumes:
+      - ./promtail/promtail-config.yaml:/etc/promtail/promtail-config.yaml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    depends_on:
+      - loki
+    networks:
+      de3_network:
+        aliases:
+          - promtail
+
+  alert-sink:
+    build:
+      context: ./alert-sink
+    container_name: de3_alert_sink
+    restart: unless-stopped
+    volumes:
+      - alert_sink_data:/data
+    networks:
+      de3_network:
+        aliases:
+          - alert-sink
+
 volumes:
   db_data:
     name: de3_db_data
@@ -227,6 +267,10 @@ volumes:
     name: de3_prometheus_data
   grafana_data:
     name: de3_grafana_data
+  loki_data:
+    name: de3_loki_data
+  alert_sink_data:
+    name: de3_alert_sink_data
 
 networks:
   de3_network:
