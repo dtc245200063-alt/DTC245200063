@@ -65,7 +65,7 @@ flowchart TD
 
 ---
 
-## 3. HƯỚNG DẪN TRIỂN KHAI NHANH (QUICK START)
+## 3. HƯỚNG DẪN CHẠY ĐÚNG THỨ TỰ
 
 ### 3.1. Yêu cầu hệ thống
 - Hệ điều hành: Linux Ubuntu 22.04 / 24.04 LTS (hoặc máy ảo VMware/VirtualBox).
@@ -73,26 +73,33 @@ flowchart TD
 - Dung lượng ổ cứng: Tối thiểu 15 GB trống.
 - Đã cài đặt: `docker.io`, `docker-compose-v2`, `openssl`, `curl`, `git`, `ufw`.
 
-### 3.2. Các bước triển khai bằng một lệnh
+### 3.2. Trình tự các bước triển khai chuẩn hóa
+
+Triển khai hệ thống trên máy chủ Ubuntu theo trình tự chuẩn hóa các bước dưới đây:
 
 ```bash
-# 1. Clone mã nguồn từ GitHub
+# Bước 1: Sao chép mã nguồn dự án từ GitHub
 git clone https://github.com/dtc245200063-alt/DTC245200063.git
+
+# Bước 2: Di chuyển vào thư mục dự án
 cd DTC245200063
 
-# 2. Tạo tệp biến môi trường từ mẫu an toàn
+# Bước 3: Tạo file cấu hình biến môi trường và điền mật khẩu
 cp .env.example .env
-# Chỉnh sửa mật khẩu mạnh nếu cần (mặc định đã có mẫu an toàn)
 chmod 600 .env
+nano .env # Cấu hình các giá trị mật khẩu bí mật an toàn
 
-# 3. Sinh chứng chỉ SSL tự ký cho Nginx Reverse Proxy
+# Bước 4: Tự động khởi tạo chứng chỉ SSL tự ký cho Nginx HTTPS
 ./nginx/gen-cert.sh 192.168.102.128
 
-# 4. Khởi chạy toàn bộ hệ thống bằng Docker Compose
+# Bước 5: Khởi chạy toàn bộ hệ thống dịch vụ bằng Docker Compose
 docker compose up -d --build
 
-# 5. Cài đặt tự động WordPress, cấu hình và seed 12 sản phẩm mẫu bằng WP-CLI
+# Bước 6: Cài đặt tự động WordPress và nạp 12 sản phẩm mẫu bằng WP-CLI
 docker compose --profile tools run --rm wpcli /scripts/install.sh
+
+# Bước 7: Kiểm tra trạng thái toàn bộ 12 container hoạt động bình thường
+docker compose ps
 ```
 
 ---
