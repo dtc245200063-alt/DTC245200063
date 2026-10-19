@@ -96,7 +96,7 @@ nano .env # Cấu hình các giá trị mật khẩu bí mật an toàn
 docker compose up -d --build
 
 # Bước 6: Cài đặt tự động WordPress và nạp 12 sản phẩm mẫu bằng WP-CLI
-docker compose --profile tools run --rm wpcli /scripts/install.sh
+docker compose --profile tools run --rm --entrypoint /bin/sh wpcli /scripts/install.sh
 
 # Bước 7: Kiểm tra trạng thái toàn bộ 12 container hoạt động bình thường
 docker compose ps
