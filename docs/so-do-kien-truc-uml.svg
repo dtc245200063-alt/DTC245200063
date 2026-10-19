@@ -1,0 +1,217 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 620" width="100%" height="100%" style="background-color: #ffffff; font-family: Arial, Helvetica, sans-serif;">
+  <defs>
+    <!-- Mũi tên nhọn chuẩn UML -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#000000" />
+    </marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; }
+      .title { font-size: 15.5px; font-weight: bold; fill: #000000; text-anchor: middle; }
+      .container-title { font-size: 13.5px; font-weight: bold; fill: #000000; text-anchor: middle; }
+      .package-title { font-size: 13.5px; font-weight: bold; fill: #000000; text-anchor: middle; }
+      .comp-text { font-size: 12.5px; fill: #000000; }
+      .comp-sub { font-size: 11.5px; fill: #000000; }
+      .edge-label { font-size: 12px; fill: #000000; }
+      .actor-label { font-size: 13px; fill: #000000; text-anchor: middle; }
+      .box-3d { fill: #ffffff; stroke: #000000; stroke-width: 1.1; }
+      .comp-box { fill: #ffffff; stroke: #000000; stroke-width: 0.9; }
+      .comp-icon { fill: #ffffff; stroke: #000000; stroke-width: 0.8; }
+      .line-main { stroke: #000000; stroke-width: 1.1; fill: none; }
+    </style>
+  </defs>
+
+  <!-- ==================== TIÊU ĐỀ ==================== -->
+  <text x="480" y="24" class="title">Sơ đồ kiến trúc hệ thống website quảng bá sản phẩm</text>
+
+  <!-- ==================== NGƯỜI DÙNG (ACTOR) ==================== -->
+  <g transform="translate(730, 48)">
+    <!-- Đầu -->
+    <circle cx="0" cy="10" r="9" fill="#ffffff" stroke="#000000" stroke-width="1.2" />
+    <!-- Thân -->
+    <line x1="0" y1="19" x2="0" y2="44" stroke="#000000" stroke-width="1.2" />
+    <!-- Tay -->
+    <line x1="-15" y1="27" x2="15" y2="27" stroke="#000000" stroke-width="1.2" />
+    <!-- Chân trái -->
+    <line x1="0" y1="44" x2="-12" y2="64" stroke="#000000" stroke-width="1.2" />
+    <!-- Chân phải -->
+    <line x1="0" y1="44" x2="12" y2="64" stroke="#000000" stroke-width="1.2" />
+    <text x="0" y="80" class="actor-label">Người dùng</text>
+  </g>
+
+  <!-- Mũi tên: Người dùng -> Reverse Proxy -->
+  <line x1="730" y1="135" x2="730" y2="210" class="line-main" marker-end="url(#arrow)" />
+  <text x="734" y="180" class="edge-label">HTTPS</text>
+
+  <!-- ==================== KHUNG DOCKER COMPOSE ==================== -->
+  <rect x="70" y="155" width="820" height="440" rx="4" fill="none" stroke="#000000" stroke-width="1.2" />
+  <text x="480" y="174" class="container-title">Docker Compose (máy chủ Ubuntu)</text>
+
+  <!-- ================================================================= -->
+  <!-- 1. KHỐI 3D: REVERSE PROXY                                        -->
+  <!-- ================================================================= -->
+  <g>
+    <!-- Mặt vát 3D trên -->
+    <polygon points="600,212 612,200 852,200 840,212" class="box-3d" />
+    <!-- Mặt vát 3D phải -->
+    <polygon points="840,212 852,200 852,293 840,305" class="box-3d" />
+    <!-- Mặt chính -->
+    <rect x="600" y="212" width="240" height="93" class="box-3d" />
+    <text x="720" y="228" class="package-title">Reverse Proxy</text>
+
+    <!-- Component Nginx -->
+    <rect x="615" y="240" width="210" height="52" class="comp-box" />
+    <!-- Icon Component UML ở góc trên phải -->
+    <g transform="translate(807, 244)">
+      <rect x="0" y="0" width="13" height="10" class="comp-icon" />
+      <rect x="-4" y="2" width="6" height="2" class="comp-icon" />
+      <rect x="-4" y="6" width="6" height="2" class="comp-icon" />
+    </g>
+    <text x="630" y="260" class="comp-text">Nginx</text>
+    <text x="630" y="278" class="comp-sub">HTTPS + security headers</text>
+  </g>
+
+  <!-- ================================================================= -->
+  <!-- 2. KHỐI 3D: ỨNG DỤNG                                              -->
+  <!-- ================================================================= -->
+  <g>
+    <!-- Mặt vát 3D trên -->
+    <polygon points="600,367 612,355 897,355 885,367" class="box-3d" />
+    <!-- Mặt vát 3D phải -->
+    <polygon points="885,367 897,355 897,438 885,450" class="box-3d" />
+    <!-- Mặt chính -->
+    <rect x="600" y="367" width="285" height="83" class="box-3d" />
+    <text x="742" y="383" class="package-title">Ứng dụng</text>
+
+    <!-- Component WordPress -->
+    <rect x="615" y="396" width="105" height="42" class="comp-box" />
+    <g transform="translate(703, 400)">
+      <rect x="0" y="0" width="13" height="10" class="comp-icon" />
+      <rect x="-4" y="2" width="6" height="2" class="comp-icon" />
+      <rect x="-4" y="6" width="6" height="2" class="comp-icon" />
+    </g>
+    <text x="630" y="422" class="comp-text">WordPress</text>
+
+    <!-- Component phpMyAdmin -->
+    <rect x="745" y="396" width="125" height="42" class="comp-box" />
+    <g transform="translate(853, 400)">
+      <rect x="0" y="0" width="13" height="10" class="comp-icon" />
+      <rect x="-4" y="2" width="6" height="2" class="comp-icon" />
+      <rect x="-4" y="6" width="6" height="2" class="comp-icon" />
+    </g>
+    <text x="760" y="422" class="comp-text">phpMyAdmin</text>
+  </g>
+
+  <!-- ================================================================= -->
+  <!-- 3. KHỐI CƠ SỞ DỮ LIỆU: MYSQL                                      -->
+  <!-- ================================================================= -->
+  <g transform="translate(685, 510)">
+    <!-- Thân trụ -->
+    <path d="M 0,10 L 0,38 A 45,9 0 0,0 90,38 L 90,10 Z" fill="#ffffff" stroke="#000000" stroke-width="1.1" />
+    <!-- Đáy elip -->
+    <ellipse cx="45" cy="38" rx="45" ry="9" fill="none" stroke="#000000" stroke-width="1.1" />
+    <!-- Nắp elip -->
+    <ellipse cx="45" cy="10" rx="45" ry="9" fill="#ffffff" stroke="#000000" stroke-width="1.1" />
+    <text x="45" y="29" class="comp-text" text-anchor="middle">MySQL</text>
+  </g>
+
+  <!-- ================================================================= -->
+  <!-- 4. KHỐI 3D: GIÁM SÁT VÀ LOG TẬP TRUNG                            -->
+  <!-- ================================================================= -->
+  <g>
+    <!-- Mặt vát 3D trên -->
+    <polygon points="95,212 107,200 577,200 565,212" class="box-3d" />
+    <!-- Mặt vát 3D phải -->
+    <polygon points="565,212 577,200 577,568 565,580" class="box-3d" />
+    <!-- Mặt chính -->
+    <rect x="95" y="212" width="470" height="368" class="box-3d" />
+    <text x="330" y="228" class="package-title">Giám sát và log tập trung</text>
+
+    <!-- Component Grafana -->
+    <rect x="365" y="245" width="105" height="42" class="comp-box" />
+    <g transform="translate(453, 249)">
+      <rect x="0" y="0" width="13" height="10" class="comp-icon" />
+      <rect x="-4" y="2" width="6" height="2" class="comp-icon" />
+      <rect x="-4" y="6" width="6" height="2" class="comp-icon" />
+    </g>
+    <text x="390" y="271" class="comp-text">Grafana</text>
+
+    <!-- Component Loki -->
+    <rect x="235" y="380" width="70" height="42" class="comp-box" />
+    <g transform="translate(288, 384)">
+      <rect x="0" y="0" width="13" height="10" class="comp-icon" />
+      <rect x="-4" y="2" width="6" height="2" class="comp-icon" />
+      <rect x="-4" y="6" width="6" height="2" class="comp-icon" />
+    </g>
+    <text x="252" y="406" class="comp-text">Loki</text>
+
+    <!-- Component Prometheus -->
+    <rect x="350" y="380" width="130" height="42" class="comp-box" />
+    <g transform="translate(463, 384)">
+      <rect x="0" y="0" width="13" height="10" class="comp-icon" />
+      <rect x="-4" y="2" width="6" height="2" class="comp-icon" />
+      <rect x="-4" y="6" width="6" height="2" class="comp-icon" />
+    </g>
+    <text x="375" y="406" class="comp-text">Prometheus</text>
+
+    <!-- Component Promtail (đọc log container) -->
+    <rect x="110" y="500" width="180" height="56" class="comp-box" />
+    <g transform="translate(273, 504)">
+      <rect x="0" y="0" width="13" height="10" class="comp-icon" />
+      <rect x="-4" y="2" width="6" height="2" class="comp-icon" />
+      <rect x="-4" y="6" width="6" height="2" class="comp-icon" />
+    </g>
+    <text x="125" y="523" class="comp-text">Promtail</text>
+    <text x="125" y="541" class="comp-sub">(đọc log container)</text>
+
+    <!-- Component Exporters (container, web, DB) -->
+    <rect x="320" y="500" width="195" height="56" class="comp-box" />
+    <g transform="translate(498, 504)">
+      <rect x="0" y="0" width="13" height="10" class="comp-icon" />
+      <rect x="-4" y="2" width="6" height="2" class="comp-icon" />
+      <rect x="-4" y="6" width="6" height="2" class="comp-icon" />
+    </g>
+    <text x="335" y="523" class="comp-text">Exporters</text>
+    <text x="335" y="541" class="comp-sub">(container, web, DB)</text>
+  </g>
+
+  <!-- ================================================================= -->
+  <!-- CÁC ĐƯỜNG MŨI TÊN KẾT NỐI (GIỐNG 100% ẢNH MẪU)                   -->
+  <!-- ================================================================= -->
+
+  <!-- 1. Nginx -> Grafana -->
+  <line x1="600" y1="266" x2="472" y2="266" class="line-main" marker-end="url(#arrow)" />
+  <text x="532" y="258" class="edge-label">proxy</text>
+
+  <!-- 2. Nginx -> WordPress -->
+  <line x1="695" y1="292" x2="665" y2="394" class="line-main" marker-end="url(#arrow)" />
+  <text x="690" y="348" class="edge-label">/proxy</text>
+
+  <!-- 3. Nginx -> phpMyAdmin -->
+  <line x1="728" y1="292" x2="790" y2="394" class="line-main" marker-end="url(#arrow)" />
+  <text x="765" y="348" class="edge-label">proxy</text>
+
+  <!-- 4. WordPress -> MySQL -->
+  <line x1="667" y1="438" x2="707" y2="512" class="line-main" marker-end="url(#arrow)" />
+  <text x="670" y="475" class="edge-label">SQL</text>
+
+  <!-- 5. phpMyAdmin -> MySQL -->
+  <line x1="800" y1="438" x2="752" y2="512" class="line-main" marker-end="url(#arrow)" />
+  <text x="785" y="475" class="edge-label">SQL</text>
+
+  <!-- 6. Grafana -> Loki -->
+  <line x1="390" y1="287" x2="280" y2="378" class="line-main" marker-end="url(#arrow)" />
+  <text x="342" y="335" class="edge-label">log</text>
+
+  <!-- 7. Grafana -> Prometheus -->
+  <line x1="415" y1="287" x2="415" y2="378" class="line-main" marker-end="url(#arrow)" />
+  <text x="419" y="335" class="edge-label">metrics</text>
+
+  <!-- 8. Promtail -> Loki (đẩy log) -->
+  <line x1="225" y1="500" x2="260" y2="424" class="line-main" marker-end="url(#arrow)" />
+  <text x="210" y="465" class="edge-label">đẩy log</text>
+
+  <!-- 9. Prometheus -> Exporters (thu metrics - đường cong) -->
+  <path d="M 350,410 C 335,435 335,465 352,498" class="line-main" marker-end="url(#arrow)" />
+  <text x="338" y="458" class="edge-label">thu metrics</text>
+
+</svg>

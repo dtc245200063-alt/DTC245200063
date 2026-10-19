@@ -1,7 +1,7 @@
 #!/bin/bash
 # ==============================================================================
 # BÀI TẬP LỚN: TRIỂN KHAI VÀ QUẢN TRỊ HỆ THỐNG PHẦN MỀM - ĐỀ TÀI 3
-# Sinh viên: Lương Việt Anh - MSSV: DTC245200063 - Lớp: CNTT
+# Sinh viên: Lương Việt Anh - MSSV: DTC245200063 - Lớp: CNTT K23B
 # Script: verify_clean_state.sh - Kiểm thử toàn diện trạng thái hệ thống
 # ==============================================================================
 set -e

@@ -3,7 +3,7 @@
 
 - **Sinh viên thực hiện:** Lương Việt Anh
 - **MSSV:** DTC245200063
-- **Lớp:** CNTT
+- **Lớp:** CNTT K23B
 - **Đề tài:** Đề tài 3 - Website Quảng bá Sản phẩm (WordPress)
 - **Hệ thống giám sát & ghi log:** Prometheus, Grafana Alerting, Loki, Promtail
 

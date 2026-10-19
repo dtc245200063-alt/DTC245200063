@@ -1,0 +1,48 @@
+@startuml so_do_kien_truc_he_thong
+!theme plain
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+title Sơ đồ kiến trúc hệ thống website quảng bá sản phẩm
+
+actor "Người dùng" as User
+
+node "Docker Compose (máy chủ Ubuntu)" {
+
+    node "Reverse Proxy" as PkgProxy {
+        component "Nginx\nHTTPS + security headers" as Nginx
+    }
+
+    node "Ứng dụng" as PkgApp {
+        component "WordPress" as WP
+        component "phpMyAdmin" as PMA
+    }
+
+    database "MySQL" as DB
+
+    node "Giám sát và log tập trung" as PkgMonitor {
+        component "Grafana" as Grafana
+        component "Loki" as Loki
+        component "Prometheus" as Prometheus
+        component "Promtail\n(đọc log container)" as Promtail
+        component "Exporters\n(container, web, DB)" as Exporters
+    }
+}
+
+' Các liên kết và nhãn đúng 100% theo ảnh mẫu
+User --> Nginx : HTTPS
+Nginx --> Grafana : proxy
+Nginx --> WP : /proxy
+Nginx --> PMA : proxy
+
+WP --> DB : SQL
+PMA --> DB : SQL
+
+Grafana --> Loki : log
+Grafana --> Prometheus : metrics
+Promtail --> Loki : đẩy log
+Prometheus --> Exporters : thu metrics
+
+@enduml

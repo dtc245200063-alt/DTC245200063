@@ -4,7 +4,7 @@
 
 - **Sinh viên thực hiện:** Lương Việt Anh
 - **Mã số sinh viên (MSSV):** DTC245200063
-- **Lớp:** CNTT
+- **Lớp:** CNTT K23B
 - **Khoa:** Công nghệ Thông tin - Trường Đại học Công nghệ Thông tin & Truyền thông (ICTU)
 - **Giảng viên hướng dẫn:** Bộ môn Quản trị Mạng & Hệ thống
 - **Repository GitHub:** [https://github.com/dtc245200063-alt/DTC245200063](https://github.com/dtc245200063-alt/DTC245200063)
